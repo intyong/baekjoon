@@ -1,50 +1,48 @@
 #include <iostream>
+#include <vector>
 #include <queue>
+#define MAX 1002
 using namespace std;
-#define MAX_SIZE 1003
-int dfs[MAX_SIZE][MAX_SIZE] = { 0 };
-int bfs[MAX_SIZE][MAX_SIZE] = { 0 };
-int visited[MAX_SIZE] = { 0 };
-queue<int> q;
-void insert_edge(int start, int end) {
-    dfs[start][end] = 1;
-    dfs[end][start] = 1;
-    bfs[start][end] = 1;
-    bfs[end][start] = 1;
-}
-void do_dfs(int n, int m) {
-    visited[n] = 1;
-    cout << n << ' ';
-    for (int i = 1; i <= m; i++) {
-        if (dfs[n][i] && !visited[i]) do_dfs(i, m);
+int map[MAX][MAX] = { 0 };
+int visited[MAX] = { 0 };
+int n = 0;  // 정점의 개수
+int m = 0;  // 간선의 개수
+int start = 0;  // 탐색의 시작점
+void dfs(int start) {
+    cout << start << ' ';
+    visited[start] = 1;
+    for (int i = 0; i <= n; i++) {
+        if (!visited[i] && map[start][i]) {
+            dfs(i);
+        }
     }
 }
-void do_bfs(int n, int m) {
-    visited[n] = 1;
-    cout << n << ' ';
-    q.push(n);
-    while(!q.empty()) {
+void bfs(int start) {
+    queue<int> q;
+    q.push(start);
+    visited[start] = 1;
+    while (!q.empty()) {
         int temp = q.front();
         q.pop();
-        for (int i = 1; i <= m; i++) {
-            if (bfs[temp][i] && !visited[i]) {
-                visited[i] = 1;
+        cout << temp << ' ';
+        for (int i = 0; i <= n; i++) {
+            if (!visited[i] && map[temp][i]) {
                 q.push(i);
-                cout << i << ' ';
+                visited[i] = 1;
             }
         }
     }
 }
 int main() {
-    int n, m, v = 0;
-    cin >> n >> m >> v;
+    cin >> n >> m >> start;
     for (int i = 0; i < m; i++) {
-        int start, end = 0;
-        cin >> start >> end;
-        insert_edge(start, end);
+        int one, two = 0;
+        cin >> one >> two;
+        map[one][two] = 1;
+        map[two][one] = 1;
     }
-    do_dfs(v, n);
+    dfs(start);
+    for (int i = 0; i <= n; i++) visited[i] = 0;
     cout << endl;
-    for (int i = 0; i < MAX_SIZE; i++) visited[i] = 0;
-    do_bfs(v, n);
+    bfs(start);
 }
